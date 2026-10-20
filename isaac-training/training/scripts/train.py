@@ -25,23 +25,36 @@ def main(cfg):
 
     # Use Wandb to monitor training
     if (cfg.wandb.run_id is None):
+        wandb_config = OmegaConf.to_container(
+            cfg,
+            resolve=True,
+            throw_on_missing=False,
+            enum_to_str=True,
+        )
+
         run = wandb.init(
             project=cfg.wandb.project,
             name=f"{cfg.wandb.name}/{datetime.datetime.now().strftime('%m-%d_%H-%M')}",
             entity=cfg.wandb.entity,
-            config=cfg,
+            config=wandb_config,
             mode=cfg.wandb.mode,
             id=wandb.util.generate_id(),
         )
     else:
+        wandb_config = OmegaConf.to_container(
+            cfg,
+            resolve=True,
+            throw_on_missing=False,
+            enum_to_str=True,
+        )
+
         run = wandb.init(
             project=cfg.wandb.project,
             name=f"{cfg.wandb.name}/{datetime.datetime.now().strftime('%m-%d_%H-%M')}",
             entity=cfg.wandb.entity,
-            config=cfg,
+            config=wandb_config,
             mode=cfg.wandb.mode,
-            id=cfg.wandb.run_id,
-            resume="must"
+            id=wandb.util.generate_id(),
         )
 
     # Navigation Training Environment
